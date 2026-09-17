@@ -9,6 +9,6 @@
     <string name="empty_message">El mensaje no puede estar vacío</string>
     <string name="notification_channel_name">Popups aleatorios</string>
     <string name="notification_channel_desc">Notificaciones enviadas en tiempos aleatorios</string>
-    <string name="notification_title">Recordatorio</string>
+    <string name="notification_title">-ACHTUNG-</string>
     <string name="permission_needed">Se necesita permiso de notificaciones para mostrar los popups</string>
 </resources>
