@@ -22,12 +22,32 @@ import com.example.popupnotifications.databinding.ActivityMainBinding;
 public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
+    private boolean monitoring = false;
 
     private final ActivityResultLauncher<String> requestPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(), granted -> {
                 if (!granted) {
                     Toast.makeText(this, R.string.permission_needed, Toast.LENGTH_LONG).show();
                 }
+            });
+
+    // Solicita el permiso de ubicación; si se concede, arranca el monitoreo.
+    private final ActivityResultLauncher<String> requestLocationLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), granted -> {
+                if (granted) {
+                    startMonitoring();
+                } else {
+                    Toast.makeText(this, R.string.location_permission_needed, Toast.LENGTH_LONG).show();
+                }
+            });
+
+    // Abre el mapa y refresca el estado al volver.
+    private final ActivityResultLauncher<Intent> mapLauncher =
+            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+                if (result.getResultCode() == RESULT_OK) {
+                    Toast.makeText(this, R.string.location_saved, Toast.LENGTH_SHORT).show();
+                }
+                refreshLocationStatus();
             });
 
     @Override
@@ -39,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
         // Precargar el mensaje guardado previamente.
         binding.messageEditText.setText(MessageStore.getMessage(this));
 
-        // Asegurar el canal de notificaciones.
+        // Asegurar los canales de notificación.
         NotificationHelper.createChannel(this);
 
         // Pedir permiso de notificaciones en Android 13+.
@@ -47,6 +67,12 @@ public class MainActivity extends AppCompatActivity {
 
         binding.saveButton.setOnClickListener(v -> onSave());
         binding.testButton.setOnClickListener(v -> onTest());
+        binding.pickLocationButton.setOnClickListener(v ->
+                mapLauncher.launch(new Intent(this, MapActivity.class)));
+        binding.monitorButton.setOnClickListener(v -> onToggleMonitoring());
+
+        refreshLocationStatus();
+        updateMonitorButton();
     }
 
     private void onSave() {
@@ -83,6 +109,59 @@ public class MainActivity extends AppCompatActivity {
             // No se pudo mostrar: falta el permiso de notificaciones (Android 13+).
             requestNotificationPermissionIfNeeded();
             Toast.makeText(this, R.string.permission_needed, Toast.LENGTH_LONG).show();
+        }
+    }
+
+    // --- Proximidad / geofencing ---
+
+    private void onToggleMonitoring() {
+        if (monitoring) {
+            GeofenceService.stop(this);
+            monitoring = false;
+            updateMonitorButton();
+            return;
+        }
+
+        if (!LocationStore.hasTarget(this)) {
+            Toast.makeText(this, R.string.no_location, Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        // Verificar permiso de ubicación antes de arrancar.
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            requestLocationLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION);
+            return;
+        }
+
+        startMonitoring();
+    }
+
+    private void startMonitoring() {
+        if (!LocationStore.hasTarget(this)) {
+            Toast.makeText(this, R.string.no_location, Toast.LENGTH_LONG).show();
+            return;
+        }
+        GeofenceService.start(this);
+        monitoring = true;
+        updateMonitorButton();
+        Toast.makeText(this, R.string.monitoring_active, Toast.LENGTH_SHORT).show();
+    }
+
+    private void updateMonitorButton() {
+        binding.monitorButton.setText(monitoring
+                ? R.string.stop_monitoring
+                : R.string.start_monitoring);
+    }
+
+    private void refreshLocationStatus() {
+        if (LocationStore.hasTarget(this)) {
+            binding.locationStatus.setText(getString(
+                    R.string.location_set,
+                    LocationStore.getLat(this),
+                    LocationStore.getLon(this)));
+        } else {
+            binding.locationStatus.setText(R.string.no_location);
         }
     }
 

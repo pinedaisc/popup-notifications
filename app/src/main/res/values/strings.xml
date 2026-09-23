@@ -11,4 +11,25 @@
     <string name="notification_channel_desc">Notificaciones enviadas en tiempos aleatorios</string>
     <string name="notification_title">-ACHTUNG-</string>
     <string name="permission_needed">Se necesita permiso de notificaciones para mostrar los popups</string>
+
+    <!-- Mapa / geofencing -->
+    <string name="proximity_title">Notificación por proximidad</string>
+    <string name="location_set">Ubicación objetivo: %1$.5f, %2$.5f</string>
+    <string name="map_title">Elegir ubicación</string>
+    <string name="map_hint">Mueve el mapa para centrar el pin en la ubicación</string>
+    <string name="map_confirm">Usar esta ubicación</string>
+    <string name="map_center_pin">Pin central</string>
+    <string name="pick_location">Elegir ubicación en el mapa</string>
+    <string name="location_saved">Ubicación guardada</string>
+    <string name="no_location">Primero elige una ubicación en el mapa</string>
+    <string name="start_monitoring">Iniciar monitoreo de proximidad</string>
+    <string name="stop_monitoring">Detener monitoreo</string>
+    <string name="monitoring_active">Monitoreando proximidad…</string>
+    <string name="location_permission_needed">Se necesita permiso de ubicación para el monitoreo</string>
+    <string name="geofence_channel_name">Proximidad</string>
+    <string name="geofence_channel_desc">Notificaciones al entrar en la zona objetivo</string>
+    <string name="geofence_service_title">Monitoreo de proximidad activo</string>
+    <string name="geofence_service_text">Buscando cuando entres en la zona objetivo</string>
+    <string name="geofence_notification_title">¡Estás en la zona!</string>
+    <string name="geofence_notification_text">Has entrado en el rango de la ubicación objetivo</string>
 </resources>

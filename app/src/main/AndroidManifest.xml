@@ -14,6 +14,20 @@
     <!-- Reprogramar las alarmas tras reiniciar el dispositivo. -->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
+    <!-- Ubicación para el geofencing (detección de proximidad). -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
+    <!-- Servicio en primer plano para monitorear la ubicación con la app en segundo plano. -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
+
+    <!-- osmdroid necesita acceso a red y almacenamiento de caché de mosaicos. -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="28" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -38,6 +52,16 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
+
+        <activity
+            android:name=".MapActivity"
+            android:exported="false"
+            android:label="@string/map_title" />
+
+        <service
+            android:name=".GeofenceService"
+            android:exported="false"
+            android:foregroundServiceType="location" />
 
     </application>
 
